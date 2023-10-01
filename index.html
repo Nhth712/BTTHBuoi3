@@ -20,104 +20,53 @@
     </style>
   </head>
     <body>
-        <h1>Trò chơi chọn nhanh (kiểm tra phản xạ)</h1>
-        <p>Hãy bấm vào hình xuất hiện phía dưới nhanh nhất mà bạn có thể.</p>
-        <p>Thời gian phản xạ của bạn:  <span id="timeTaken"></span></p>
-        <p style="font-weight: bold;">Thời gian ghi nhận: <span id="timer"></span></p>
-        <p style="font-weight: bold;">Thời gian nhanh nhất: <span id="best-time"></span></p>  
-        <div id="shape" style="border-radius: 0px; background-color: rgb(15, 224, 235); width: 144.296px; height: 144.296px; top: 33.5548px; left: 362.703px; display: block;"></div>    
       <audio controls>
-        <source src="horse.ogg" type="audio/ogg">
-        <source src="horse.mp3" type="audio/mpeg">
-          Your browser does not support the audio element.
-      </audio>  
+        <source src="./MP3/Audio.mp3" type="audio/mpeg">
+          Trình duyệt của bạn không hỗ trợ tệp âm thanh này.
+      </audio>
+      <h1>Kiểm tra phản ứng của bạn!</h1>
+      <p>Hãy nhấp vào các ô và vòng tròn nhanh nhất có thể!</p>
+      <p class ="bold">Thời gian của bạn: <span id="timeTaken"></span></p>
+      <div id="shape"></div>
       <script type="text/javascript">
-          var containerWidth, containerHeight;
-          var timerElement = document.getElementById('timer');
-      
-          function getRandomPosition() {
-            var centerX = containerWidth / 2;
-            var centerY = containerHeight / 2;
-            var radius = 100; 
-          
-            var angle = Math.random() * Math.PI * 2;
-            var distance = Math.random() * radius;
-            
-            var x = centerX + Math.cos(angle) * distance - 50; 
-            var y = centerY + Math.sin(angle) * distance - 50;
-          
-            return { x: x, y: y };
+          let start = new Date().getTime();
+          function getRandomColor() {
+              const letters = '0123456789ABCDEF';
+              let color = '#';
+              for (let i = 0; i < 6; i++) { 
+                  color += letters[Math.floor(Math.random() * 16)];
+              
+              }
+              return color;
           }
-          
-          function generateRandomColor() {
-            var letters = '0123456789ABCDEF';
-            var color = '#';
-            for (var i = 0; i < 6; i++) {
-              color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
+          function makeShapeAppear() {
+              let top = Math.random() * 400;
+              let left = Math.random() * 400;
+              let width = (Math.random() * 200) + 100;
+              if (Math.random() > 0.5) {
+                  document.getElementById("shape").style.borderRadius = "50%";
+              } else {
+                  document.getElementById("shape").style.borderRadius = "0";
+              }
+              document.getElementById("shape").style.backgroundColor = getRandomColor();
+              document.getElementById("shape").style.width = width + "px";
+              document.getElementById("shape").style.height = width + "px";
+              document.getElementById("shape").style.top = top + "px";
+              document.getElementById("shape").style.left = left + "px";
+              document.getElementById("shape").style.display = "block";
+              start = new Date().getTime();
           }
-      
-          function getRandomShape() {
-            var shapes = ['square', 'rectangle', 'triangle'];
-            var randomIndex = Math.floor(Math.random() * shapes.length);
-            return shapes[randomIndex];
+          function appearAfterDelay() {
+              setTimeout(makeShapeAppear, Math.random() + 1000);
           }
-      
-          function createBlock() {
-            var block = document.createElement('div');
-            block.className = 'block ' + getRandomShape();
-            block.style.backgroundColor = generateRandomColor();
-      
-            var position = getRandomPosition();
-            block.style.left = position.x + 'px';
-            block.style.top = position.y + 'px';
-      
-            block.addEventListener('click', handleBlockClick);
-            return block;
+          appearAfterDelay();
+          document.getElementById("shape").onclick = function() {
+              document.getElementById("shape").style.display = "none";
+              let end = new Date().getTime();
+              let timeTaken = (end - start) / 1000;
+              document.getElementById("timeTaken").innerHTML = timeTaken + "s";
+              appearAfterDelay();
           }
-      
-          function handleBlockClick() {
-            var block = event.target;
-            var endTime = new Date();
-            var timeDiff = endTime - startTime;
-            timerElement.textContent = timeDiff + 'ms';
-      
-            block.parentNode.removeChild(block);
-            gameContainer.appendChild(createBlock());
-            startTime = new Date();
-          }
-      
-          var shortestTime = Infinity; 
-          var bestTimeElement = document.getElementById('best-time'); 
-      
-          function handleBlockClick() {
-            var block = event.target;
-            var endTime = new Date();
-            var timeDiff = endTime - startTime;
-            timerElement.textContent = timeDiff + 'ms';
-          
-            if (timeDiff < shortestTime) {
-              shortestTime = timeDiff;
-              bestTimeElement.textContent = shortestTime + 'ms';
-            }
-          
-            var audio = new Audio('/BT_BUOI8/AUDIO/pop.mp3'); 
-            audio.play();
-          
-            block.parentNode.removeChild(block);
-            gameContainer.appendChild(createBlock());
-            startTime = new Date();
-          }
-      
-          var gameContainer = document.getElementById('game-container');
-      
-          var containerRect = gameContainer.getBoundingClientRect();
-          containerWidth = containerRect.width;
-          containerHeight = containerRect.height;
-      
-          var startTime = new Date();
-          gameContainer.appendChild(createBlock());
-        </script>
+      </script>
     </body>
 </html>
